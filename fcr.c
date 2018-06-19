@@ -78,6 +78,7 @@ void WinMainCRTStartup()
 				{
 					if (GetCmdExW(hProcess, buf, BufLen)
 						&& (!lwcsstr(buf, L"--extension-process") || bAll)
+						&&  !lwcsstr(buf, L"--type=gpu-process")
 						&&   lwcsstr(buf, L"--type=renderer"))
 						TerminateProcess(hProcess, -1);
 					CloseHandle(hProcess);
