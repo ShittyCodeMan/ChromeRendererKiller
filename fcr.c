@@ -1,13 +1,8 @@
 // コンパイル時にChromeとビット長(x86/x64)を合わせる必要がある
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <winternl.h>
 #include <tlhelp32.h>
-
-#pragma comment(linker, "/SUBSYSTEM:WINDOWS")
-#pragma comment(linker, "/NODEFAULTLIB")
-#pragma comment(linker, "/INCREMENTAL:NO")
-#pragma comment(linker, "/MERGE:.RDATA=.TEXT")
-//#pragma comment(linker, "/align:16")
 
 #define BufLen 32768
 
@@ -50,19 +45,13 @@ void WinMainCRTStartup()
 	WCHAR *pCmdLn, *buf;
 	BOOL bAll;
 	HMODULE hNtDll;
-	wchar_t *(__cdecl *lwcsstr)(const wchar_t *Str, const wchar_t *SubStr);
-
-	hNtDll = LoadLibrary("ntdll.dll");
-	*(FARPROC*)&lwcsstr = GetProcAddress(hNtDll, "wcsstr");
-	if (!lwcsstr)
-		return;
 
 	hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (INVALID_HANDLE_VALUE == hSnapshot)
 		return;
 
 	pCmdLn = GetCommandLineW();
-	bAll = lwcsstr(pCmdLn, L" -a") != 0;
+	bAll = wcsstr(pCmdLn, L" -a") != 0;
 
 	buf = (WCHAR*)GlobalAlloc(GMEM_FIXED, BufLen);
 
@@ -77,9 +66,9 @@ void WinMainCRTStartup()
 				if (hProcess)
 				{
 					if (GetCmdExW(hProcess, buf, BufLen)
-						&& (!lwcsstr(buf, L"--extension-process") || bAll)
-						&&  !lwcsstr(buf, L"--type=gpu-process")
-						&&   lwcsstr(buf, L"--type=renderer"))
+						&& (!wcsstr(buf, L"--extension-process") || bAll)
+						&&  !wcsstr(buf, L"--type=gpu-process")
+						&&   wcsstr(buf, L"--type=renderer"))
 						TerminateProcess(hProcess, -1);
 					CloseHandle(hProcess);
 				}
