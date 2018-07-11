@@ -5,6 +5,6 @@ fcr.exe: fcr.obj ntdll_lib.lib
 fcr.obj: fcr.c
 	@cl fcr.c /c /nologo /O1 /GS- /Oi-
 ntdll_lib.lib: ntdll_lib.obj
-	@link ntdll_lib.obj /nologo /DLL /nodefaultlib /noentry /def:ntdll_lib.def /ignore:4070,4108,4254 /incremental:no /section:.text,w /merge:.data=.text /merge:.rdata=.text /align:16 /safeseh:no /emitpogophaseinfo
+	@lib ntdll_lib.obj /nologo /nodefaultlib /def:ntdll_lib.def
 ntdll_lib.obj: ntdll_lib.c
 	@cl /LD ntdll_lib.c /c /nologo /O1 /GS- /Oi-
