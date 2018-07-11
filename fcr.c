@@ -38,7 +38,7 @@ BOOL __fastcall GetCmdExW(HANDLE hProcess, LPWSTR pszBuffer, int bufferLength)
 	return TRUE;
 }
 
-void WinMainCRTStartup()
+int WinMainCRTStartup()
 {
 	HANDLE hSnapshot, hProcess;
 	PROCESSENTRY32 pe;
@@ -48,7 +48,7 @@ void WinMainCRTStartup()
 
 	hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (INVALID_HANDLE_VALUE == hSnapshot)
-		return;
+		return -1;
 
 	pCmdLn = GetCommandLineW();
 	bAll = wcsstr(pCmdLn, L" -a") != 0;
@@ -77,7 +77,7 @@ void WinMainCRTStartup()
 		while(Process32Next(hSnapshot, &pe));
 	}
 
-	GlobalFree(buf);
-	CloseHandle(hSnapshot);
-	return;
+	//GlobalFree(buf);
+	//CloseHandle(hSnapshot);
+	return 0;
 }
