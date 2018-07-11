@@ -6,7 +6,7 @@
 
 #define BufLen 32768
 
-BOOL __fastcall GetCmdExW(HANDLE hProcess, LPWSTR pszBuffer, int bufferLength)
+__forceinline BOOL __fastcall GetCmdExW(HANDLE hProcess, LPWSTR pszBuffer, int bufferLength)
 {
 	NTSTATUS status;
 	PROCESS_BASIC_INFORMATION pbi;
