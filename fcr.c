@@ -6,7 +6,7 @@
 
 #define BufLen 32768
 
-__forceinline BOOL __fastcall GetCmdExW(HANDLE hProcess, LPWSTR pszBuffer, int bufferLength)
+__forceinline BOOL GetCmdExW(HANDLE hProcess, LPWSTR pszBuffer, int bufferLength)
 {
 	NTSTATUS status;
 	PROCESS_BASIC_INFORMATION pbi;
@@ -56,25 +56,20 @@ int WinMainCRTStartup()
 	buf = (WCHAR*)GlobalAlloc(GMEM_FIXED, BufLen);
 
 	pe.dwSize = sizeof(pe);
-	if (Process32First(hSnapshot, &pe))
-	{
-		do
-		{
-			if (!lstrcmp("chrome.exe", pe.szExeFile))
-			{
+	if (Process32First(hSnapshot, &pe)) {
+		do {
+			if (!lstrcmp("chrome.exe", pe.szExeFile)) {
 				hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE, FALSE, pe.th32ProcessID);
-				if (hProcess)
-				{
+				if (hProcess) {
 					if (GetCmdExW(hProcess, buf, BufLen)
 						&& (!wcsstr(buf, L"--extension-process") || bAll)
-						&&  !wcsstr(buf, L"--type=gpu-process")
+						&& (!wcsstr(buf, L"--type=gpu-process") || bAll)
 						&&   wcsstr(buf, L"--type=renderer"))
 						TerminateProcess(hProcess, -1);
 					CloseHandle(hProcess);
 				}
 			}
-		}
-		while(Process32Next(hSnapshot, &pe));
+		} while(Process32Next(hSnapshot, &pe));
 	}
 
 	//GlobalFree(buf);
